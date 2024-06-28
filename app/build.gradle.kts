@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -11,6 +13,9 @@ android {
     namespace = "com.ahmetocak.android_weather_app"
     compileSdk = 34
 
+    val p = Properties()
+    p.load(project.rootProject.file("local.properties").inputStream())
+
     defaultConfig {
         applicationId = "com.ahmetocak.android_weather_app"
         minSdk = 26
@@ -19,6 +24,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "API_KEY", p.getProperty("API_KEY"))
     }
 
     buildTypes {
@@ -39,6 +46,7 @@ android {
     }
     buildFeatures {
         dataBinding = true
+        buildConfig = true
     }
 }
 
