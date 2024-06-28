@@ -3,7 +3,8 @@ package com.ahmetocak.android_weather_app.data.remote
 import com.ahmetocak.android_weather_app.data.di.AppDispatchers
 import com.ahmetocak.android_weather_app.data.di.Dispatcher
 import com.ahmetocak.android_weather_app.data.remote.api.OpenWeatherApi
-import com.ahmetocak.android_weather_app.data.remote.model.WeatherModelDto
+import com.ahmetocak.android_weather_app.data.remote.model.CurrentWeatherDto
+import com.ahmetocak.android_weather_app.data.remote.model.WeatherForecastDto
 import com.ahmetocak.android_weather_app.model.BaseResponse
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -19,8 +20,15 @@ class RemoteDataSourceImpl @Inject constructor(
     override suspend fun getCurrentWeatherData(
         latitude: Double,
         longitude: Double
-    ): BaseResponse<WeatherModelDto> {
+    ): BaseResponse<CurrentWeatherDto> {
         return remoteResponseWrapper { api.getCurrentWeather(latitude, longitude) }
+    }
+
+    override suspend fun getWeatherForecastData(
+        latitude: Double,
+        longitude: Double
+    ): BaseResponse<WeatherForecastDto> {
+        return remoteResponseWrapper { api.getWeatherForecast(latitude, longitude) }
     }
 
     private suspend fun <T> remoteResponseWrapper(

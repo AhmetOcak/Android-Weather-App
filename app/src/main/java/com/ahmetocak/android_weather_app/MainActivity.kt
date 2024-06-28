@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launch {
-            when (val response = repository.getCurrentWeatherData(44.34, 10.99)) {
+            when (val response = repository.getWeatherForecastData(44.34, 10.99)) {
                 is BaseResponse.Success -> Log.d("weather data", response.data.toString())
                 is BaseResponse.Error -> Log.d("weather data", response.exception.stackTraceToString())
             }

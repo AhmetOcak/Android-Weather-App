@@ -8,7 +8,7 @@ import com.ahmetocak.android_weather_app.model.WeatherModel
 import com.ahmetocak.android_weather_app.model.Wind
 import com.google.gson.annotations.SerializedName
 
-data class WeatherModelDto(
+data class CurrentWeatherDto(
     val weather: List<WeatherDto>,
     val main: MainDto,
     val wind: WindDto,
@@ -19,43 +19,13 @@ data class WeatherModelDto(
     val cityName: String
 )
 
-data class WeatherDto(
-    val id: Int,
-    val main: String,
-    val description: String,
-    val icon: String
-)
-
-data class MainDto(
-    val temp: Double,
-    val pressure: Int,
-    val humidity: Int,
-    @SerializedName("feels_like")
-    val feelsLike: Double,
-    @SerializedName("temp_min")
-    val tempMin: Double,
-    @SerializedName("temp_max")
-    val tempMax: Double
-)
-
-data class WindDto(
-    val speed: Double,
-    val deg: Int,
-    val gust: Double
-)
-
-data class CloudsDto(
-    @SerializedName("all")
-    val cloudiness: Int
-)
-
 data class SunDto(
     val country: String,
     val sunrise: Int,
     val sunset: Int
 )
 
-fun WeatherModelDto.toWeatherModel(): WeatherModel {
+fun CurrentWeatherDto.toWeatherModel(): WeatherModel {
     return WeatherModel(
         weather = weather.map {
             Weather(
