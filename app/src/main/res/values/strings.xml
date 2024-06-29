@@ -4,4 +4,5 @@
     <string name="feels_like">Feels like %s°</string>
     <string name="min_max_temp">Max %s° Min %s°</string>
     <string name="_5_days_forecast">5 days forecast</string>
+    <string name="daily_min_max_temp"><b>%s°</b>/%s°</string>
 </resources>

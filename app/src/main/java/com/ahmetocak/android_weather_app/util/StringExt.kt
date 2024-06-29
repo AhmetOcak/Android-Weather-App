@@ -54,3 +54,15 @@ fun Long.formatDate(is24HourFormat: Boolean): WeatherDate {
         )
     }
 }
+
+fun Long.toDay(): String {
+    val currentTime = Instant.ofEpochSecond(Instant.now().epochSecond)
+    val weatherTime = Instant.ofEpochSecond(this)
+
+    val currentDate = LocalDateTime.ofInstant(currentTime, ZoneId.systemDefault()).toLocalDate()
+    val weatherDate = LocalDateTime.ofInstant(weatherTime, ZoneId.systemDefault()).toLocalDate()
+
+    return if (currentDate.isEqual(weatherDate)) {
+        "Today"
+    } else weatherDate.dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault())
+}

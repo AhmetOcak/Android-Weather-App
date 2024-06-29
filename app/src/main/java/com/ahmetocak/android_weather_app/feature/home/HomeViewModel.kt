@@ -7,9 +7,12 @@ import com.ahmetocak.android_weather_app.data.WeatherRepository
 import com.ahmetocak.android_weather_app.data.di.AppDispatchers
 import com.ahmetocak.android_weather_app.data.di.Dispatcher
 import com.ahmetocak.android_weather_app.model.BaseResponse
+import com.ahmetocak.android_weather_app.model.WeatherList
+import com.ahmetocak.android_weather_app.ui.ItemDailyForecastModel
 import com.ahmetocak.android_weather_app.ui.ItemThreeHourForecastModel
 import com.ahmetocak.android_weather_app.util.formatDate
 import com.ahmetocak.android_weather_app.util.isDayNight
+import com.ahmetocak.android_weather_app.util.toDay
 import com.ahmetocak.android_weather_app.util.toErrorMessage
 import com.ahmetocak.android_weather_app.util.toRoundedString
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -83,14 +86,60 @@ class HomeViewModel @Inject constructor(
                                     mainDescription = data.weather.first().main,
                                     weatherDate = data.date.formatDate(is24HourFormat)
                                 )
-                            }
+                            },
+                            dailyForecast = calculateAverageDailyTemp(
+                                weather = response.data.weather,
+                                is24HourFormat = is24HourFormat
+                            )
                         )
                     }
                 }
 
-                is BaseResponse.Error -> {}
+                is BaseResponse.Error -> {
+                    Log.e("getThreeHourlyForecast", response.exception.stackTraceToString())
+                    _uiState.update {
+                        it.copy(
+                            dataStatus = it.dataStatus.copy(
+                                weatherForecastDataStatus = Status.END
+                            ),
+                            errorMessage = listOf(response.exception.toErrorMessage())
+                        )
+                    }
+                }
             }
         }
+    }
+
+    private fun calculateAverageDailyTemp(
+        weather: List<WeatherList>,
+        is24HourFormat: Boolean
+    ): List<ItemDailyForecastModel> {
+        val dailyForecastList = mutableListOf<ItemDailyForecastModel>()
+
+        for (i in weather.indices step 4) {
+            var minTemp = 0.0
+            var maxTemp = 0.0
+
+            for (j in i until i + 4) {
+                minTemp += weather[j].main.tempMin
+                maxTemp += weather[j].main.tempMax
+            }
+
+            dailyForecastList.add(
+                ItemDailyForecastModel(
+                    day = weather[i].date.toDay(),
+                    weatherDate = weather[i].date
+                        .formatDate(is24HourFormat)
+                        .copy(isDayNight = false),
+                    description = weather[i].weather.first().description,
+                    mainDescription = weather[i].weather.first().main,
+                    minTemp = (minTemp / 4).toRoundedString(),
+                    maxTemp = (maxTemp / 4).toRoundedString()
+                )
+            )
+        }
+
+        return dailyForecastList.distinctBy { it.day }
     }
 
     fun consumedErrorMessage() {
@@ -105,6 +154,7 @@ data class HomeUiState(
     ),
     val currentWeatherInfo: CurrentWeatherInfo? = null,
     val todayThreeHourlyForecast: List<ItemThreeHourForecastModel> = emptyList(),
+    val dailyForecast: List<ItemDailyForecastModel> = emptyList(),
     val errorMessage: List<String> = emptyList()
 )
 

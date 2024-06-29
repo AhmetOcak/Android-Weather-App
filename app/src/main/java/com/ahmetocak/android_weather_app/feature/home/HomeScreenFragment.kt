@@ -12,6 +12,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.ahmetocak.android_weather_app.databinding.FragmentHomeScreenBinding
+import com.ahmetocak.android_weather_app.feature.home.adapter.DailyForecastAdapter
 import com.ahmetocak.android_weather_app.feature.home.adapter.HourlyForecastAdapter
 import com.ahmetocak.android_weather_app.ui.PaddingDecoration
 import dagger.hilt.android.AndroidEntryPoint
@@ -45,6 +46,12 @@ class HomeScreenFragment : Fragment() {
             addItemDecoration(PaddingDecoration(16, 16, 0 ,0))
         }
 
+        val dailyForecastAdapter = DailyForecastAdapter()
+        binding.rvDailyForecast.apply {
+            adapter = dailyForecastAdapter
+            addItemDecoration(PaddingDecoration(0, 0, 16, 16))
+        }
+
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { uiState ->
@@ -58,6 +65,10 @@ class HomeScreenFragment : Fragment() {
 
                     if (uiState.todayThreeHourlyForecast.isNotEmpty()) {
                         threeHourlyForecastAdapter.submitList(uiState.todayThreeHourlyForecast)
+                    }
+
+                    if (uiState.dailyForecast.isNotEmpty()) {
+                        dailyForecastAdapter.submitList(uiState.dailyForecast)
                     }
 
                     if (uiState.errorMessage.isNotEmpty()) {

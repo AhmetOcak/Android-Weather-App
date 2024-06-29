@@ -1,72 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:contentPadding="16dp">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <data>
+
+        <variable
+            name="itemDailyForecastModel"
+            type="com.ahmetocak.android_weather_app.ui.ItemDailyForecastModel" />
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        app:contentPadding="16dp">
 
-        <LinearLayout
-            android:id="@+id/linearLayout2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/tv_day"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-                android:textStyle="bold"
-                tools:text="Monday" />
-
-            <TextView
-                android:id="@+id/tv_temp_description"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
-                android:textColor="@android:color/darker_gray"
-                tools:text="Clear" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <ImageView
-                android:id="@+id/iv_weather_icon"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:layout_weight="1"
-                android:importantForAccessibility="no"
-                tools:srcCompat="@tools:sample/avatars" />
-
-            <View
-                android:layout_width="16dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
-
-            <TextView
-                android:id="@+id/tv_min_max"
+            <LinearLayout
+                android:id="@+id/linearLayout2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
-                android:textStyle="bold"
-                tools:text="+20/+10" />
-        </LinearLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</com.google.android.material.card.MaterialCardView>
+                android:gravity="center"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/tv_day"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                    android:textStyle="bold"
+                    android:text="@{itemDailyForecastModel.day}"
+                    tools:text="Monday" />
+
+                <TextView
+                    android:id="@+id/tv_temp_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.Material3.BodyMedium"
+                    android:textColor="@android:color/darker_gray"
+                    android:text="@{itemDailyForecastModel.mainDescription}"
+                    tools:text="Clear" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/iv_weather_icon"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_weight="1"
+                    android:importantForAccessibility="no"
+                    app:mainDescription="@{itemDailyForecastModel.mainDescription}"
+                    app:description="@{itemDailyForecastModel.description}"
+                    app:isDayNight="@{itemDailyForecastModel.weatherDate.isDayNight}"
+                    tools:srcCompat="@tools:sample/avatars" />
+
+                <View
+                    android:layout_width="16dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/tv_min_max"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+                    android:text="@{String.format(@string/daily_min_max_temp(String.valueOf(itemDailyForecastModel.maxTemp), String.valueOf(itemDailyForecastModel.minTemp)))}"
+                    tools:text="+20/+10" />
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+</layout>
