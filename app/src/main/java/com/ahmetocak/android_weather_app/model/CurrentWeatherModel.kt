@@ -6,7 +6,8 @@ data class WeatherModel(
     val wind: Wind,
     val clouds: Clouds,
     val sun: Sun,
-    val cityName: String
+    val cityName: String,
+    val date: Long
 )
 
 data class Sun(

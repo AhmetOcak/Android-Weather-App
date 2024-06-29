@@ -31,8 +31,8 @@ data class WeatherListDto(
     @SerializedName("pop")
     val pop: Double,
 
-    @SerializedName("dt_txt")
-    val date: String
+    @SerializedName("dt")
+    val date: Long
 )
 
 fun WeatherForecastDto.toWeatherForecastModel(): WeatherForecastModel {
@@ -51,8 +51,7 @@ fun WeatherForecastDto.toWeatherForecastModel(): WeatherForecastModel {
                     Weather(
                         id = weatherDto.id,
                         main = weatherDto.main,
-                        description = weatherDto.description,
-                        icon = weatherDto.icon
+                        description = weatherDto.description
                     )
                 },
                 clouds = Clouds(cloudiness = it.clouds.cloudiness),

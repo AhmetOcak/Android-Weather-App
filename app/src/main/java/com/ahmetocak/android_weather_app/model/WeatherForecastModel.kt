@@ -11,7 +11,7 @@ data class WeatherList(
     val clouds: Clouds,
     val wind: Wind,
     val pop: Double,
-    val date: String
+    val date: Long
 )
 
 data class City(

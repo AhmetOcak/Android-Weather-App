@@ -13,10 +13,15 @@ data class CurrentWeatherDto(
     val main: MainDto,
     val wind: WindDto,
     val clouds: CloudsDto,
+
     @SerializedName("sys")
     val sun: SunDto,
+
     @SerializedName("name")
-    val cityName: String
+    val cityName: String,
+
+    @SerializedName("dt")
+    val date: Long
 )
 
 data class SunDto(
@@ -31,8 +36,7 @@ fun CurrentWeatherDto.toWeatherModel(): WeatherModel {
             Weather(
                 id = it.id,
                 main = it.main,
-                description = it.description,
-                icon = it.icon
+                description = it.description
             )
         },
         main = Main(
@@ -54,6 +58,7 @@ fun CurrentWeatherDto.toWeatherModel(): WeatherModel {
             sunrise = sun.sunrise,
             sunset = sun.sunset
         ),
-        cityName = cityName
+        cityName = cityName,
+        date = date
     )
 }
