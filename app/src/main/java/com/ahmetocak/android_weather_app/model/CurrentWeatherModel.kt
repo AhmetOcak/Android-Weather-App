@@ -12,6 +12,6 @@ data class WeatherModel(
 
 data class Sun(
     val country: String,
-    val sunrise: Int,
-    val sunset: Int
+    val sunrise: Long,
+    val sunset: Long
 )

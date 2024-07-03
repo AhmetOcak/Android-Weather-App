@@ -9,5 +9,24 @@
         android:id="@+id/homeScreenFragment"
         android:name="com.ahmetocak.android_weather_app.feature.home.HomeScreenFragment"
         android:label="fragment_home_screen"
-        tools:layout="@layout/fragment_home_screen" />
+        tools:layout="@layout/fragment_home_screen" >
+        <action
+            android:id="@+id/action_homeScreenFragment_to_weatherDetailScreenFragment"
+            app:destination="@id/weatherDetailScreenFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/weatherDetailScreenFragment"
+        android:name="com.ahmetocak.android_weather_app.feature.detail.WeatherDetailScreenFragment"
+        android:label="fragment_weather_detail_screen"
+        tools:layout="@layout/fragment_weather_detail_screen" >
+        <argument
+            android:name="current_weather_info"
+            app:argType="com.ahmetocak.android_weather_app.ui.CurrentWeatherInfo" />
+        <argument
+            android:name="daily_forecast"
+            app:argType="com.ahmetocak.android_weather_app.ui.ItemDailyForecastModelList" />
+        <argument
+            android:name="three_hourly_forecast"
+            app:argType="com.ahmetocak.android_weather_app.model.WeatherForecastModel" />
+    </fragment>
 </navigation>

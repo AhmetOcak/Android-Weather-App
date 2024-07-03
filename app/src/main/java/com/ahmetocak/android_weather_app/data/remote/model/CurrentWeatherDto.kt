@@ -26,8 +26,8 @@ data class CurrentWeatherDto(
 
 data class SunDto(
     val country: String,
-    val sunrise: Int,
-    val sunset: Int
+    val sunrise: Long,
+    val sunset: Long
 )
 
 fun CurrentWeatherDto.toWeatherModel(): WeatherModel {

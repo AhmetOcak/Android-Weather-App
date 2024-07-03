@@ -1,5 +1,9 @@
-package com.ahmetocak.android_weather_app.feature.home
+package com.ahmetocak.android_weather_app.ui
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class CurrentWeatherInfo(
     val currentTemp: String,
     val mainDescription: String,
@@ -9,4 +13,4 @@ data class CurrentWeatherInfo(
     val maxTemp: String,
     val cityAndCountry: String,
     val isNight: Boolean
-)
+) : Parcelable

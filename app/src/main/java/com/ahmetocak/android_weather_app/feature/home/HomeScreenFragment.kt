@@ -11,9 +11,11 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.ahmetocak.android_weather_app.databinding.FragmentHomeScreenBinding
 import com.ahmetocak.android_weather_app.feature.home.adapter.DailyForecastAdapter
 import com.ahmetocak.android_weather_app.feature.home.adapter.HourlyForecastAdapter
+import com.ahmetocak.android_weather_app.ui.ItemDailyForecastModelList
 import com.ahmetocak.android_weather_app.ui.PaddingDecoration
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -41,15 +43,31 @@ class HomeScreenFragment : Fragment() {
         viewModel.getThreeHourlyForecast(41.0082, 28.9784, DateFormat.is24HourFormat(context))
 
         val threeHourlyForecastAdapter = HourlyForecastAdapter()
-        binding.rvTodayWeatherData.apply {
+        binding.includeWeatherCard.rvTodayWeatherData.apply {
             adapter = threeHourlyForecastAdapter
-            addItemDecoration(PaddingDecoration(16, 16, 0 ,0))
+            addItemDecoration(PaddingDecoration(16, 16, 0, 0))
         }
 
         val dailyForecastAdapter = DailyForecastAdapter()
         binding.rvDailyForecast.apply {
             adapter = dailyForecastAdapter
             addItemDecoration(PaddingDecoration(0, 0, 16, 16))
+        }
+
+        binding.tvViewDetails.setOnClickListener {
+            with(viewModel.uiState.value) {
+                if (currentWeatherInfo != null && dailyForecast.isNotEmpty() && viewModel.threeHourlyForecastData != null) {
+                    viewModel.threeHourlyForecastData?.let { forecast ->
+                        findNavController().navigate(
+                            HomeScreenFragmentDirections.actionHomeScreenFragmentToWeatherDetailScreenFragment(
+                                currentWeatherInfo,
+                                ItemDailyForecastModelList(dailyForecast),
+                                forecast
+                            )
+                        )
+                    }
+                }
+            }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {

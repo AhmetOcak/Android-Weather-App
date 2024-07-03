@@ -18,8 +18,8 @@ data class WeatherForecastDto(
 data class CityDto(
     val name: String,
     val country: String,
-    val sunrise: Int,
-    val sunset: Int
+    val sunrise: Long,
+    val sunset: Long
 )
 
 data class WeatherListDto(

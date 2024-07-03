@@ -7,12 +7,13 @@ import com.ahmetocak.android_weather_app.data.WeatherRepository
 import com.ahmetocak.android_weather_app.data.di.AppDispatchers
 import com.ahmetocak.android_weather_app.data.di.Dispatcher
 import com.ahmetocak.android_weather_app.model.BaseResponse
+import com.ahmetocak.android_weather_app.model.WeatherForecastModel
 import com.ahmetocak.android_weather_app.model.WeatherList
+import com.ahmetocak.android_weather_app.ui.CurrentWeatherInfo
 import com.ahmetocak.android_weather_app.ui.ItemDailyForecastModel
 import com.ahmetocak.android_weather_app.ui.ItemThreeHourForecastModel
 import com.ahmetocak.android_weather_app.util.formatDate
 import com.ahmetocak.android_weather_app.util.isDayNight
-import com.ahmetocak.android_weather_app.util.toDay
 import com.ahmetocak.android_weather_app.util.toErrorMessage
 import com.ahmetocak.android_weather_app.util.toRoundedString
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,6 +32,9 @@ class HomeViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState get() = _uiState.asStateFlow()
+
+    var threeHourlyForecastData: WeatherForecastModel? = null
+        private set
 
     fun getCurrentWeatherData(lat: Double, long: Double) {
         viewModelScope.launch(ioDispatcher) {
@@ -93,6 +97,7 @@ class HomeViewModel @Inject constructor(
                             )
                         )
                     }
+                    threeHourlyForecastData = response.data
                 }
 
                 is BaseResponse.Error -> {
@@ -127,7 +132,6 @@ class HomeViewModel @Inject constructor(
 
             dailyForecastList.add(
                 ItemDailyForecastModel(
-                    day = weather[i].date.toDay(),
                     weatherDate = weather[i].date
                         .formatDate(is24HourFormat)
                         .copy(isDayNight = false),
@@ -139,7 +143,7 @@ class HomeViewModel @Inject constructor(
             )
         }
 
-        return dailyForecastList.distinctBy { it.day }
+        return dailyForecastList.distinctBy { it.weatherDate.day }
     }
 
     fun consumedErrorMessage() {

@@ -5,4 +5,21 @@
     <string name="min_max_temp">Max %s° Min %s°</string>
     <string name="_5_days_forecast">5 days forecast</string>
     <string name="daily_min_max_temp"><b>%s°</b>/%s°</string>
+    <string name="speed">Speed</string>
+    <string name="degree">Degree</string>
+    <string name="gust">Gust</string>
+    <string name="sunrise">Sunrise</string>
+    <string name="sun">Sun</string>
+    <string name="sunset">Sunset</string>
+    <string name="wind_speed">%s m/s</string>
+    <string name="wind_degree">%s°</string>
+    <string name="wind_gust">%s m/s</string>
+    <string name="humidity">%s%%</string>
+    <string name="pressure">%s hPa</string>
+    <string name="cloudiness">%s%%</string>
+    <string name="conditions_title">Conditions</string>
+    <string name="humidity_title">Humidity</string>
+    <string name="pressure_title">Pressure</string>
+    <string name="cloudiness_title">Cloudiness</string>
+    <string name="wind_title">Wind</string>
 </resources>

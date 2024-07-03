@@ -35,7 +35,7 @@
                     android:layout_height="wrap_content"
                     android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
                     android:textStyle="bold"
-                    android:text="@{itemDailyForecastModel.day}"
+                    android:text="@{itemDailyForecastModel.weatherDate.day}"
                     tools:text="Monday" />
 
                 <TextView
@@ -63,10 +63,10 @@
                     android:layout_height="36dp"
                     android:layout_weight="1"
                     android:importantForAccessibility="no"
-                    app:mainDescription="@{itemDailyForecastModel.mainDescription}"
                     app:description="@{itemDailyForecastModel.description}"
                     app:isDayNight="@{itemDailyForecastModel.weatherDate.isDayNight}"
-                    tools:srcCompat="@tools:sample/avatars" />
+                    app:mainDescription="@{itemDailyForecastModel.mainDescription}"
+                    tools:srcCompat="@drawable/clear_sky_day" />
 
                 <View
                     android:layout_width="16dp"
