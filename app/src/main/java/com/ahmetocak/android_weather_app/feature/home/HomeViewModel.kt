@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.ahmetocak.android_weather_app.data.WeatherRepository
 import com.ahmetocak.android_weather_app.data.di.AppDispatchers
 import com.ahmetocak.android_weather_app.data.di.Dispatcher
+import com.ahmetocak.android_weather_app.data.local.LocationPreferenceManager
 import com.ahmetocak.android_weather_app.model.BaseResponse
 import com.ahmetocak.android_weather_app.model.WeatherForecastModel
 import com.ahmetocak.android_weather_app.model.WeatherList
@@ -18,6 +19,7 @@ import com.ahmetocak.android_weather_app.util.toErrorMessage
 import com.ahmetocak.android_weather_app.util.toRoundedString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -27,7 +29,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     private val weatherRepository: WeatherRepository,
-    @Dispatcher(AppDispatchers.IO) private val ioDispatcher: CoroutineDispatcher
+    @Dispatcher(AppDispatchers.IO) private val ioDispatcher: CoroutineDispatcher,
+    private val locationPreferenceManager: LocationPreferenceManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -35,6 +38,12 @@ class HomeViewModel @Inject constructor(
 
     var threeHourlyForecastData: WeatherForecastModel? = null
         private set
+
+    init {
+        _uiState.update {
+            it.copy(uiEvents = listOf(HomeScreenUiEvent.Init))
+        }
+    }
 
     fun getCurrentWeatherData(lat: Double, long: Double) {
         viewModelScope.launch(ioDispatcher) {
@@ -101,7 +110,6 @@ class HomeViewModel @Inject constructor(
                 }
 
                 is BaseResponse.Error -> {
-                    Log.e("getThreeHourlyForecast", response.exception.stackTraceToString())
                     _uiState.update {
                         it.copy(
                             dataStatus = it.dataStatus.copy(
@@ -146,6 +154,25 @@ class HomeViewModel @Inject constructor(
         return dailyForecastList.distinctBy { it.weatherDate.day }
     }
 
+    fun getLocationFromCache(is24HourFormat: Boolean, onCacheNull: () -> Unit) {
+        viewModelScope.launch(ioDispatcher) {
+            val location = async { locationPreferenceManager.getLocation() }.await()
+            if (location != null) {
+                with(location) {
+                    getCurrentWeatherData(latitude, longitude)
+                    getThreeHourlyForecast(latitude, longitude, is24HourFormat)
+                }
+                Log.d("getLocationFromCache", "location getting from cache")
+            } else onCacheNull()
+        }
+    }
+
+    fun cacheLocation(latitude: Double, longitude: Double) {
+        viewModelScope.launch(ioDispatcher) {
+            locationPreferenceManager.saveLocation(latitude, longitude)
+        }
+    }
+
     fun consumedErrorMessage() {
         _uiState.update { it.copy(errorMessage = emptyList()) }
     }
@@ -159,7 +186,8 @@ data class HomeUiState(
     val currentWeatherInfo: CurrentWeatherInfo? = null,
     val todayThreeHourlyForecast: List<ItemThreeHourForecastModel> = emptyList(),
     val dailyForecast: List<ItemDailyForecastModel> = emptyList(),
-    val errorMessage: List<String> = emptyList()
+    val errorMessage: List<String> = emptyList(),
+    val uiEvents: List<HomeScreenUiEvent> = emptyList()
 )
 
 data class DataStatus(
@@ -170,4 +198,8 @@ data class DataStatus(
 enum class Status {
     LOADING,
     END
+}
+
+sealed interface HomeScreenUiEvent {
+    data object Init: HomeScreenUiEvent
 }

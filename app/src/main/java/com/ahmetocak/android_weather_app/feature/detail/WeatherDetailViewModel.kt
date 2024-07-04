@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
+import kotlin.properties.Delegates
 
 @HiltViewModel
 class WeatherDetailViewModel @Inject constructor(
@@ -26,10 +27,12 @@ class WeatherDetailViewModel @Inject constructor(
     val uiState get() = _uiState.asStateFlow()
 
     private var threeHourlyForecast: WeatherForecastModel? = null
+    private var is24HourFormat by Delegates.notNull<Boolean>()
 
     init {
         with(savedStateHandle) {
             threeHourlyForecast = get<WeatherForecastModel>("three_hourly_forecast")
+            is24HourFormat = get<Boolean>("is_24_hour_format") ?: false
             _uiState.update {
                 it.copy(
                     currentWeatherInfo = get<CurrentWeatherInfo>("current_weather_info"),
@@ -41,8 +44,8 @@ class WeatherDetailViewModel @Inject constructor(
                                 windSpeed = wind.speed.toRoundedString(),
                                 windDegree = wind.deg.toString(),
                                 windGust = wind.gust.toRoundedString(),
-                                sunset = data.city.sunset.readTimestamp(false),
-                                sunrise = data.city.sunrise.readTimestamp(false),
+                                sunset = data.city.sunset.readTimestamp(is24HourFormat),
+                                sunrise = data.city.sunrise.readTimestamp(is24HourFormat),
                                 cloudiness = clouds.cloudiness.toString(),
                                 humidity = main.humidity.toString(),
                                 pressure = main.pressure.toString()
@@ -54,7 +57,7 @@ class WeatherDetailViewModel @Inject constructor(
                             temp = "${data.main.temp.toRoundedString()}°",
                             description = data.weather.first().description,
                             mainDescription = data.weather.first().main,
-                            weatherDate = data.date.formatDate(false)
+                            weatherDate = data.date.formatDate(is24HourFormat)
                         )
                     } ?: emptyList()
                 )
@@ -88,8 +91,8 @@ class WeatherDetailViewModel @Inject constructor(
                         humidity = weatherData.main.humidity.toString(),
                         pressure = weatherData.main.pressure.toString(),
                         cloudiness = weatherData.clouds.cloudiness.toString(),
-                        sunrise = city.sunrise.readTimestamp(false),
-                        sunset = city.sunset.readTimestamp(false)
+                        sunrise = city.sunrise.readTimestamp(is24HourFormat),
+                        sunset = city.sunset.readTimestamp(is24HourFormat)
                     )
                 )
             }

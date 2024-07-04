@@ -13,6 +13,11 @@
         <action
             android:id="@+id/action_homeScreenFragment_to_weatherDetailScreenFragment"
             app:destination="@id/weatherDetailScreenFragment" />
+        <action
+            android:id="@+id/action_homeScreenFragment_to_permissionScreenFragment"
+            app:destination="@id/permissionScreenFragment"
+            app:popUpTo="@id/homeScreenFragment"
+            app:popUpToInclusive="true" />
     </fragment>
     <fragment
         android:id="@+id/weatherDetailScreenFragment"
@@ -28,5 +33,20 @@
         <argument
             android:name="three_hourly_forecast"
             app:argType="com.ahmetocak.android_weather_app.model.WeatherForecastModel" />
+        <argument
+            android:name="is_24_hour_format"
+            app:argType="boolean"
+            android:defaultValue="false" />
+    </fragment>
+    <fragment
+        android:id="@+id/permissionScreenFragment"
+        android:name="com.ahmetocak.android_weather_app.feature.permission.PermissionScreenFragment"
+        android:label="fragment_permission_screen"
+        tools:layout="@layout/fragment_permission_screen" >
+        <action
+            android:id="@+id/action_permissionScreenFragment_to_homeScreenFragment"
+            app:destination="@id/homeScreenFragment"
+            app:popUpTo="@id/permissionScreenFragment"
+            app:popUpToInclusive="true" />
     </fragment>
 </navigation>

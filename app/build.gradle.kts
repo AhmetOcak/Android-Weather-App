@@ -78,4 +78,10 @@ dependencies {
 
     // Splash API
     implementation(libs.androidx.core.splashscreen)
+
+    // Location
+    implementation(libs.play.services.location)
+
+    // Datastore
+    implementation(libs.androidx.datastore.preferences)
 }

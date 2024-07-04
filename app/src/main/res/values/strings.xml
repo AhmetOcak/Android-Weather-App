@@ -22,4 +22,8 @@
     <string name="pressure_title">Pressure</string>
     <string name="cloudiness_title">Cloudiness</string>
     <string name="wind_title">Wind</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="permission_description">In order to furnish you with precise weather updates, it is necessary for me to ascertain your current location. This enables me to deliver real-time weather reports and forecasts tailored to your specific geographical area.</string>
+    <string name="settings">Settings</string>
 </resources>
