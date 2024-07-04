@@ -1,5 +1,6 @@
 package com.ahmetocak.android_weather_app.data.remote
 
+import android.util.Log
 import com.ahmetocak.android_weather_app.data.di.AppDispatchers
 import com.ahmetocak.android_weather_app.data.di.Dispatcher
 import com.ahmetocak.android_weather_app.data.remote.api.OpenWeatherApi
@@ -21,6 +22,7 @@ class RemoteDataSourceImpl @Inject constructor(
         latitude: Double,
         longitude: Double
     ): BaseResponse<CurrentWeatherDto> {
+        Log.d("getCurrentWeatherData", "worked")
         return remoteResponseWrapper { api.getCurrentWeather(latitude, longitude) }
     }
 

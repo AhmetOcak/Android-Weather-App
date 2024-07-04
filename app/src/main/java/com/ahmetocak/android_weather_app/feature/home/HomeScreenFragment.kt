@@ -1,6 +1,8 @@
 package com.ahmetocak.android_weather_app.feature.home
 
+import android.content.Context
 import android.content.Intent
+import android.location.LocationManager
 import android.os.Bundle
 import android.provider.Settings
 import android.text.format.DateFormat
@@ -8,7 +10,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -80,10 +81,17 @@ class HomeScreenFragment : Fragment() {
                     binding.isLoading = with(uiState.dataStatus) {
                         currentWeatherDataStatus == Status.LOADING || weatherForecastDataStatus == Status.LOADING
                     }
+                    binding.isError = uiState.isError && binding.isLoading != true
+                    binding.includeError.btnTryAgain.setOnClickListener {
+                        viewModel.reTry()
+                        getWeatherData()
+                    }
+
                     if (uiState.uiEvents.isNotEmpty()) {
                         when (uiState.uiEvents.first()) {
                             is HomeScreenUiEvent.Init -> getWeatherData()
                         }
+                        viewModel.consumedUiEvent()
                     }
 
                     with(uiState) {
@@ -97,19 +105,9 @@ class HomeScreenFragment : Fragment() {
                             dailyForecastAdapter.submitList(uiState.dailyForecast)
                         }
                     }
-
-                    if (uiState.errorMessage.isNotEmpty()) {
-                        Toast.makeText(
-                            requireContext(),
-                            uiState.errorMessage.first(),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        viewModel.consumedErrorMessage()
-                    }
                 }
             }
         }
-
     }
 
     private fun getWeatherData() {
@@ -142,15 +140,21 @@ class HomeScreenFragment : Fragment() {
         )
     }
 
+    // TODO: Ayarlar ekranından geri döndükten sonra sonsuza kadar loading çalışıyor.
     private fun askUserToTurnOnGps() {
-        val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
-        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-        startActivity(intent)
-        Toast.makeText(
-            requireContext(),
-            "Please enable GPS and restart the app.",
-            Toast.LENGTH_LONG
-        ).show()
+        val locationManager = requireActivity().application.getSystemService(
+            Context.LOCATION_SERVICE
+        ) as LocationManager
+        val isGpsAndNetworkEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+
+        if (isGpsAndNetworkEnabled) {
+            return
+        } else {
+            val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(intent)
+        }
     }
 
     override fun onDestroy() {

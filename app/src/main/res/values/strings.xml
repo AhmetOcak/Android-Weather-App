@@ -26,4 +26,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="permission_description">In order to furnish you with precise weather updates, it is necessary for me to ascertain your current location. This enables me to deliver real-time weather reports and forecasts tailored to your specific geographical area.</string>
     <string name="settings">Settings</string>
+    <string name="error_description">Looks like something went wrong. Please try again later 😥😥</string>
+    <string name="try_again">Try again</string>
 </resources>

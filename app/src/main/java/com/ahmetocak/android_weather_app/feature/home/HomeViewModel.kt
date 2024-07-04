@@ -1,6 +1,5 @@
 package com.ahmetocak.android_weather_app.feature.home
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ahmetocak.android_weather_app.data.WeatherRepository
@@ -15,7 +14,6 @@ import com.ahmetocak.android_weather_app.ui.ItemDailyForecastModel
 import com.ahmetocak.android_weather_app.ui.ItemThreeHourForecastModel
 import com.ahmetocak.android_weather_app.util.formatDate
 import com.ahmetocak.android_weather_app.util.isDayNight
-import com.ahmetocak.android_weather_app.util.toErrorMessage
 import com.ahmetocak.android_weather_app.util.toRoundedString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -69,13 +67,12 @@ class HomeViewModel @Inject constructor(
                 }
 
                 is BaseResponse.Error -> {
-                    Log.e("getCurrentWeatherData", response.exception.stackTraceToString())
                     _uiState.update {
                         it.copy(
                             dataStatus = it.dataStatus.copy(
                                 currentWeatherDataStatus = Status.END
                             ),
-                            errorMessage = listOf(response.exception.toErrorMessage())
+                            isError = true
                         )
                     }
                 }
@@ -115,7 +112,7 @@ class HomeViewModel @Inject constructor(
                             dataStatus = it.dataStatus.copy(
                                 weatherForecastDataStatus = Status.END
                             ),
-                            errorMessage = listOf(response.exception.toErrorMessage())
+                            isError = true
                         )
                     }
                 }
@@ -162,7 +159,6 @@ class HomeViewModel @Inject constructor(
                     getCurrentWeatherData(latitude, longitude)
                     getThreeHourlyForecast(latitude, longitude, is24HourFormat)
                 }
-                Log.d("getLocationFromCache", "location getting from cache")
             } else onCacheNull()
         }
     }
@@ -173,8 +169,20 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun consumedErrorMessage() {
-        _uiState.update { it.copy(errorMessage = emptyList()) }
+    fun reTry() {
+        _uiState.update {
+            it.copy(
+                isError = false,
+                dataStatus = DataStatus(
+                    currentWeatherDataStatus = Status.LOADING,
+                    weatherForecastDataStatus = Status.LOADING
+                )
+            )
+        }
+    }
+
+    fun consumedUiEvent() {
+        _uiState.update { it.copy(uiEvents = emptyList()) }
     }
 }
 
@@ -186,8 +194,8 @@ data class HomeUiState(
     val currentWeatherInfo: CurrentWeatherInfo? = null,
     val todayThreeHourlyForecast: List<ItemThreeHourForecastModel> = emptyList(),
     val dailyForecast: List<ItemDailyForecastModel> = emptyList(),
-    val errorMessage: List<String> = emptyList(),
-    val uiEvents: List<HomeScreenUiEvent> = emptyList()
+    val uiEvents: List<HomeScreenUiEvent> = emptyList(),
+    val isError: Boolean = false
 )
 
 data class DataStatus(
@@ -201,5 +209,5 @@ enum class Status {
 }
 
 sealed interface HomeScreenUiEvent {
-    data object Init: HomeScreenUiEvent
+    data object Init : HomeScreenUiEvent
 }
