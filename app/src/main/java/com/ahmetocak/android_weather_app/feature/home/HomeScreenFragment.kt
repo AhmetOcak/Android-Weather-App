@@ -15,6 +15,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.ahmetocak.android_weather_app.core.BaseFragment
 import com.ahmetocak.android_weather_app.data.LocationTracker
 import com.ahmetocak.android_weather_app.databinding.FragmentHomeScreenBinding
 import com.ahmetocak.android_weather_app.feature.home.adapter.DailyForecastAdapter
@@ -26,40 +27,32 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeScreenFragment : Fragment() {
-
-    private var _binding: FragmentHomeScreenBinding? = null
-    private val binding: FragmentHomeScreenBinding get() = _binding!!
+class HomeScreenFragment : BaseFragment<FragmentHomeScreenBinding>() {
 
     @Inject
     lateinit var locationTracker: LocationTracker
 
     private val viewModel: HomeViewModel by viewModels()
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentHomeScreenBinding.inflate(layoutInflater)
-        return binding.root
-    }
+    override fun inflateBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentHomeScreenBinding = FragmentHomeScreenBinding.inflate(inflater, container, false)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
+    override fun FragmentHomeScreenBinding.onMain() {
         val threeHourlyForecastAdapter = HourlyForecastAdapter()
-        binding.includeWeatherCard.rvTodayWeatherData.apply {
+        includeWeatherCard.rvTodayWeatherData.apply {
             adapter = threeHourlyForecastAdapter
             addItemDecoration(PaddingDecoration(16, 16, 0, 0))
         }
 
         val dailyForecastAdapter = DailyForecastAdapter()
-        binding.rvDailyForecast.apply {
+        rvDailyForecast.apply {
             adapter = dailyForecastAdapter
             addItemDecoration(PaddingDecoration(0, 0, 16, 16))
         }
 
-        binding.tvViewDetails.setOnClickListener {
+        tvViewDetails.setOnClickListener {
             with(viewModel.uiState.value) {
                 if (currentWeatherInfo != null && dailyForecast.isNotEmpty() && viewModel.threeHourlyForecastData != null) {
                     viewModel.threeHourlyForecastData?.let { forecast ->
@@ -78,11 +71,11 @@ class HomeScreenFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { uiState ->
-                    binding.isLoading = with(uiState.dataStatus) {
+                    isLoading = with(uiState.dataStatus) {
                         currentWeatherDataStatus == Status.LOADING || weatherForecastDataStatus == Status.LOADING
                     }
-                    binding.isError = uiState.isError && binding.isLoading != true
-                    binding.includeError.btnTryAgain.setOnClickListener {
+                    isError = uiState.isError && isLoading != true
+                    includeError.btnTryAgain.setOnClickListener {
                         viewModel.reTry()
                         getWeatherData()
                     }
@@ -145,8 +138,9 @@ class HomeScreenFragment : Fragment() {
         val locationManager = requireActivity().application.getSystemService(
             Context.LOCATION_SERVICE
         ) as LocationManager
-        val isGpsAndNetworkEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
-                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+        val isGpsAndNetworkEnabled =
+            locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                    locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
 
         if (isGpsAndNetworkEnabled) {
             return
@@ -155,10 +149,5 @@ class HomeScreenFragment : Fragment() {
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
             startActivity(intent)
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
     }
 }

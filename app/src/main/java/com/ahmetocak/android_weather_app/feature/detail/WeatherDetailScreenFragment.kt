@@ -1,15 +1,13 @@
 package com.ahmetocak.android_weather_app.feature.detail
 
-import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.ahmetocak.android_weather_app.core.BaseFragment
 import com.ahmetocak.android_weather_app.databinding.FragmentWeatherDetailScreenBinding
 import com.ahmetocak.android_weather_app.feature.detail.adapter.OnDayClickListener
 import com.ahmetocak.android_weather_app.feature.detail.adapter.SelectableDailyForecastAdapter
@@ -20,25 +18,18 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class WeatherDetailScreenFragment : Fragment() {
-
-    private var _binding: FragmentWeatherDetailScreenBinding? = null
-    private val binding get() = _binding!!
+class WeatherDetailScreenFragment : BaseFragment<FragmentWeatherDetailScreenBinding>() {
 
     private val viewModel: WeatherDetailViewModel by viewModels()
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentWeatherDetailScreenBinding.inflate(inflater)
-        return binding.root
-    }
+    override fun inflateBinding(
+        inflater: LayoutInflater,
+        container: ViewGroup?
+    ): FragmentWeatherDetailScreenBinding =
+        FragmentWeatherDetailScreenBinding.inflate(inflater, container, false)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        binding.mtToolbar.setNavigationOnClickListener {
+    override fun FragmentWeatherDetailScreenBinding.onMain() {
+        mtToolbar.setNavigationOnClickListener {
             findNavController().navigateUp()
         }
 
@@ -49,14 +40,14 @@ class WeatherDetailScreenFragment : Fragment() {
                 }
             }
         )
-        binding.rvDaily.apply {
+        rvDaily.apply {
             adapter = dailyForecastAdapter
-            addItemDecoration(PaddingDecoration(16, 16, 0 , 0))
+            addItemDecoration(PaddingDecoration(16, 16, 0, 0))
 
         }
 
         val hourlyForecastAdapter = HourlyForecastAdapter()
-        binding.includeWeatherCard.rvTodayWeatherData.apply {
+        includeWeatherCard.rvTodayWeatherData.apply {
             adapter = hourlyForecastAdapter
             addItemDecoration(PaddingDecoration(16, 16, 0, 0))
         }
@@ -64,30 +55,23 @@ class WeatherDetailScreenFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { uiState ->
-                    with(binding) {
-                        if (uiState.currentWeatherInfo != null) {
-                            currentWeatherInfo = uiState.currentWeatherInfo
-                        }
+                    if (uiState.currentWeatherInfo != null) {
+                        currentWeatherInfo = uiState.currentWeatherInfo
+                    }
 
-                        if (uiState.dailyForecast.isNotEmpty()) {
-                            dailyForecastAdapter.submitList(uiState.dailyForecast)
-                        }
+                    if (uiState.dailyForecast.isNotEmpty()) {
+                        dailyForecastAdapter.submitList(uiState.dailyForecast)
+                    }
 
-                        if (uiState.weatherDetails != null) {
-                            weatherDetails = uiState.weatherDetails
-                        }
+                    if (uiState.weatherDetails != null) {
+                        weatherDetails = uiState.weatherDetails
+                    }
 
-                        if (uiState.todayThreeHourlyForecast.isNotEmpty()) {
-                            hourlyForecastAdapter.submitList(uiState.todayThreeHourlyForecast)
-                        }
+                    if (uiState.todayThreeHourlyForecast.isNotEmpty()) {
+                        hourlyForecastAdapter.submitList(uiState.todayThreeHourlyForecast)
                     }
                 }
             }
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
     }
 }
