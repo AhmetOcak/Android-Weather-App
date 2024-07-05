@@ -1,5 +1,6 @@
 package com.ahmetocak.android_weather_app.feature.detail
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.ahmetocak.android_weather_app.model.WeatherForecastModel
@@ -33,6 +34,7 @@ class WeatherDetailViewModel @Inject constructor(
         with(savedStateHandle) {
             threeHourlyForecast = get<WeatherForecastModel>("three_hourly_forecast")
             is24HourFormat = get<Boolean>("is_24_hour_format") ?: false
+            Log.d("format", is24HourFormat.toString())
             _uiState.update {
                 it.copy(
                     currentWeatherInfo = get<CurrentWeatherInfo>("current_weather_info"),

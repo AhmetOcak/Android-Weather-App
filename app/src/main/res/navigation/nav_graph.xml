@@ -35,8 +35,7 @@
             app:argType="com.ahmetocak.android_weather_app.model.WeatherForecastModel" />
         <argument
             android:name="is_24_hour_format"
-            app:argType="boolean"
-            android:defaultValue="false" />
+            app:argType="boolean" />
     </fragment>
     <fragment
         android:id="@+id/permissionScreenFragment"

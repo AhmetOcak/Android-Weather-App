@@ -1,5 +1,7 @@
 package com.ahmetocak.android_weather_app.feature.detail
 
+import android.content.res.Configuration
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
@@ -15,6 +17,7 @@ import com.ahmetocak.android_weather_app.feature.home.adapter.HourlyForecastAdap
 import com.ahmetocak.android_weather_app.ui.ItemDailyForecastModel
 import com.ahmetocak.android_weather_app.ui.PaddingDecoration
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -32,6 +35,12 @@ class WeatherDetailScreenFragment : BaseFragment<FragmentWeatherDetailScreenBind
         mtToolbar.setNavigationOnClickListener {
             findNavController().navigateUp()
         }
+        mtToolbar.setNavigationIconTint(
+            when (context?.resources?.configuration?.uiMode?.and(Configuration.UI_MODE_NIGHT_MASK)) {
+                Configuration.UI_MODE_NIGHT_YES -> Color.GRAY
+                else -> Color.BLACK
+            }
+        )
 
         val dailyForecastAdapter = SelectableDailyForecastAdapter(
             onDayClickListener = object : OnDayClickListener {
@@ -54,7 +63,7 @@ class WeatherDetailScreenFragment : BaseFragment<FragmentWeatherDetailScreenBind
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collect { uiState ->
+                viewModel.uiState.collectLatest { uiState ->
                     if (uiState.currentWeatherInfo != null) {
                         currentWeatherInfo = uiState.currentWeatherInfo
                     }

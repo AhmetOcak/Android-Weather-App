@@ -3,12 +3,9 @@ package com.ahmetocak.android_weather_app.feature.home
 import android.content.Context
 import android.content.Intent
 import android.location.LocationManager
-import android.os.Bundle
 import android.provider.Settings
 import android.text.format.DateFormat
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -23,6 +20,7 @@ import com.ahmetocak.android_weather_app.feature.home.adapter.HourlyForecastAdap
 import com.ahmetocak.android_weather_app.ui.ItemDailyForecastModelList
 import com.ahmetocak.android_weather_app.ui.PaddingDecoration
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -60,7 +58,8 @@ class HomeScreenFragment : BaseFragment<FragmentHomeScreenBinding>() {
                             HomeScreenFragmentDirections.actionHomeScreenFragmentToWeatherDetailScreenFragment(
                                 currentWeatherInfo,
                                 ItemDailyForecastModelList(dailyForecast),
-                                forecast
+                                forecast,
+                                DateFormat.is24HourFormat(context)
                             )
                         )
                     }
@@ -70,7 +69,7 @@ class HomeScreenFragment : BaseFragment<FragmentHomeScreenBinding>() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collect { uiState ->
+                viewModel.uiState.collectLatest { uiState ->
                     isLoading = with(uiState.dataStatus) {
                         currentWeatherDataStatus == Status.LOADING || weatherForecastDataStatus == Status.LOADING
                     }

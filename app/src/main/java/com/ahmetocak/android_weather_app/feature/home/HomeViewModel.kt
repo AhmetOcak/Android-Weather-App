@@ -127,12 +127,12 @@ class HomeViewModel @Inject constructor(
         val dailyForecastList = mutableListOf<ItemDailyForecastModel>()
 
         for (i in weather.indices step 4) {
-            var minTemp = 0.0
+            var minTemp = weather[i].main.tempMin
             var maxTemp = 0.0
 
             for (j in i until i + 4) {
-                minTemp += weather[j].main.tempMin
-                maxTemp += weather[j].main.tempMax
+                minTemp = minOf(minTemp, weather[j].main.tempMin)
+                maxTemp = maxOf(maxTemp, weather[j].main.tempMax)
             }
 
             dailyForecastList.add(
@@ -142,8 +142,8 @@ class HomeViewModel @Inject constructor(
                         .copy(isDayNight = false),
                     description = weather[i].weather.first().description,
                     mainDescription = weather[i].weather.first().main,
-                    minTemp = (minTemp / 4).toRoundedString(),
-                    maxTemp = (maxTemp / 4).toRoundedString()
+                    minTemp = minTemp.toRoundedString(),
+                    maxTemp = maxTemp.toRoundedString()
                 )
             )
         }

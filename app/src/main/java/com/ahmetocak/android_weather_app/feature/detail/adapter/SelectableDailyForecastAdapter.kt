@@ -24,9 +24,9 @@ class SelectableDailyForecastAdapter(private val onDayClickListener: OnDayClickL
         fun bind(itemDailyForecastModel: ItemDailyForecastModel, isSelectedDay: Boolean) {
             binding.itemModel = itemDailyForecastModel
             binding.mvDailyWeather.strokeColor = if (isSelectedDay) {
-                Color.RED
+                Color.parseColor("#ffdb72")
             } else {
-                Color.BLACK
+                Color.GRAY
             }
         }
     }
