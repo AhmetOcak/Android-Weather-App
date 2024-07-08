@@ -132,7 +132,6 @@ class HomeScreenFragment : BaseFragment<FragmentHomeScreenBinding>() {
         )
     }
 
-    // TODO: Ayarlar ekranından geri döndükten sonra sonsuza kadar loading çalışıyor.
     private fun askUserToTurnOnGps() {
         val locationManager = requireActivity().application.getSystemService(
             Context.LOCATION_SERVICE

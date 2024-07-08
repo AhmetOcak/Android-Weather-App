@@ -82,7 +82,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
-                android:text="@{String.format(@string/min_max_temp(String.valueOf(currentWeatherInfo.minTemp), String.valueOf(currentWeatherInfo.maxTemp)))}"
+                android:text="@{String.format(@string/min_max_temp(String.valueOf(currentWeatherInfo.maxTemp), String.valueOf(currentWeatherInfo.minTemp)))}"
                 android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
